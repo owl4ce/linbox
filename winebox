@@ -51,7 +51,7 @@ Categories=Network;
 GenericName=MikroTik Utility
 Exec=${wine} ${HOME}/.winebox/winbox${CHK_ARCH}.exe
 Type=Application
-Icon=${HOME}/.winebox/winebox.png" 
+Icon=${HOME}/.winebox/winebox.png
 EOF
     chmod +x "${HOME}/.local/share/applications/winebox.desktop"
     msg "Winebox successfully installed!"
