@@ -67,9 +67,11 @@ EOF
     msg "Winebox successfully installed!" # Success.
 }
 
+# Check if running as regular user, exit if running as root.
 if [ "$(id -u)" -eq 0 ]; then    
     err "Running as ${R}root${NC} is detected. Please run as regular user!"; exit 1
 else
+    # Main.
     case ${1} in
         -u) if [ -d "${HOME}/.winebox" ]; then
                 rm -rfv "${HOME}/.winebox" "${HOME}/.local/share/applications/winebox.desktop" && \
