@@ -14,7 +14,7 @@ err() { printf "${R} > error:${NC} $*\n"; exit 1; }
 msg() { printf "${G} > ${NC}$*\n"; }
 
 # Check dependencies.
-checkdep() { type "$1" >/dev/null 2>&1 || err "${M}$1${NC} is not installed. Please install it first!"; }
+checkdep() { type "$1" >/dev/null 2>&1 || err "${M}${1}${NC} is not installed. Please install it first!"; }
 
 # Winbox (64/32)-bit.
 winbox32() { curl -L "https://mt.lv/winbox" -o "${HOME}/.winebox/winbox32.exe"; }
