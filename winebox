@@ -7,7 +7,6 @@
 # https://github.com/owl4ce/winebox
 
 LC_ALL=C LANG=C
-
 R="\033[1;31m" M="\033[1;35m" G="\033[1;32m" W="\033[1;37m" NC="\033[0m"
 
 err() { printf "${R} > error:${NC} $*\n"; exit 1; }
