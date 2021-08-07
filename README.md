@@ -1,7 +1,7 @@
 <br>
 <p align="center"><a name="top" href="#dependencies-"><img width="25%" src="./.winebox/winebox.png"></a></p>
 
-### <p align="center">Win(e)box</p>
+### <p align="center">WIN(E)BOX</p>
 
 ##  
 ### Dependencies <img alt="" align="right" src="https://badges.pufler.dev/visits/owl4ce/winebox?style=flat-square&label=&color=63c5ea&logo=GitHub&logoColor=white&labelColor=373e4d"/>
