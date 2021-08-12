@@ -26,11 +26,11 @@ chkdep() {
 # So if `err` called, the RC var will defined with 1 as well as return code.
 newxit() { [ ${RC:-0} -eq 1 ] && exit ${RC} ||:; }
 
-install() {
-    # Checking all required dependencies.
-    chkdep "wine" "id" "lscpu" "curl" "grep" "cat" "chmod" "rm"
-    newxit # Exit with correct return code if one of dependencies are not exist.
+# Checking all required dependencies.
+chkdep "wine" "id" "lscpu" "curl" "grep" "cat" "chmod" "rm"
+newxit # Exit with correct return code if one of dependencies are not exist.
     
+install() {    
     # Winbox (64/32)-bit.
     winbox32() { curl -L "https://mt.lv/winbox" -o "${HOME}/.winebox/winbox32.exe"; }
     winbox64() { curl -L "https://mt.lv/winbox64" -o "${HOME}/.winebox/winbox64.exe"; }
