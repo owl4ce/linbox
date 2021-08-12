@@ -5,7 +5,7 @@
 
 ##  
 ### Dependencies <img alt="" align="right" src="https://badges.pufler.dev/visits/owl4ce/winebox?style=flat-square&label=&color=63c5ea&logo=GitHub&logoColor=white&labelColor=373e4d"/>
-`sh` `curl` `wine`
+`sh` `wine` `curl` `util-linux` `coreutils` `grep`
 
 ##  
 ### Install
@@ -13,7 +13,7 @@
 $ sh <(curl -s "https://raw.githubusercontent.com/owl4ce/winebox/main/winebox")
 ```
 
-> :heavy_check_mark: **wine-6.X (Staging)**
+> :heavy_check_mark:   `wine-6.x (staging)`
 
 ##  
 ### Uninstall
