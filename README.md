@@ -5,7 +5,7 @@
 
 ##  
 ### Dependencies <img alt="" align="right" src="https://badges.pufler.dev/visits/owl4ce/winebox?style=flat-square&label=&color=63c5ea&logo=GitHub&logoColor=white&labelColor=373e4d"/>
-`sh` `wine` `curl` `util-linux` `coreutils` `grep`
+`sh` `wine` `util-linux` `grep` `curl` `coreutils`
 
 ##  
 ### Install
