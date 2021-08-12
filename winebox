@@ -1,55 +1,63 @@
 #!/usr/bin/env sh
 
-# Shell script to install winbox on GNU/Linux (wine).
-# Author: owl4ce
+# POSIX-sh script to install winbox on GNU/Linux (wine).
+# Author: owl4ce <findarr@pm.me>
 # License: GPL-3.0
 # ---------------------------------
 # https://github.com/owl4ce/winebox
 
-LC_ALL=C LANG=C; # Speedup script by disable unicode.
-R="\033[1;31m" M="\033[1;35m" G="\033[1;32m" W="\033[1;37m" NC="\033[0m"
+LC_ALL=C LANG=C; # Speedup script by disable unicode. Below are color codes.
+R="\033[1;31m" G="\033[1;32m" M="\033[1;35m" m="\033[0;35m" NC="\033[0m"
 
-# Output messages.
-err() { printf "${R} > error:${NC} $*\n"; exit 1; }
-msg() { printf "${G} > ${NC}$*\n"; }
+# Output messages and error code marker.
+err() { >&2 printf "${R} > error:${NC} ${@}\n" && RC=1; }
+msg() { printf "${G} > ${NC}${@}\n"; }
 
-# Check dependencies.
-checkdep() { type "$1" >/dev/null 2>&1 || err "${M}${1}${NC} is not installed. Please install it first!"; }
+# Dependencies checker.
+chkdep() {
+    while [ -n "$1" ]; do
+        if [ ! -x "$(command -v "$1")" ]; then
+            err "${m}${1}${NC} is not installed. Install it first!"
+        fi; shift
+    done
+}
 
-# Winbox (64/32)-bit.
-winbox32() { curl -L "https://mt.lv/winbox" -o "${HOME}/.winebox/winbox32.exe"; }
-winbox64() { curl -L "https://mt.lv/winbox64" -o "${HOME}/.winebox/winbox64.exe"; }
-
-# Get OS's arch.
-CHK_ARCH="$(lscpu | grep -oP 'Architecture:.*_\K[^.*]+')"
+# Just call `newxit` instead of `exit $?`, we don't use `return <num>` here.
+# So if `err` called, the RC var will defined with 1 as well as return code.
+newxit() { [ ${RC:-0} -eq 1 ] && exit ${RC} ||:; }
 
 install() {
-    # Check all dependencies.
-    for X in "lscpu" "curl" "wine"; do checkdep "$X"; done && unset X
+    # Checking all required dependencies.
+    chkdep "wine" "id" "lscpu" "curl" "grep" "cat" "chmod" "rm"
+    newxit # Exit with correct return code if one of dependencies are not exist.
     
+    # Winbox (64/32)-bit.
+    winbox32() { curl -L "https://mt.lv/winbox" -o "${HOME}/.winebox/winbox32.exe"; }
+    winbox64() { curl -L "https://mt.lv/winbox64" -o "${HOME}/.winebox/winbox64.exe"; }
+
+    # Get OS's arch.
+    CHK_ARCH="$(lscpu | grep -oP 'Architecture:.*_\K[^.*]+')"
+
     # Inform wine version and OS's arch.
     msg "Wine: $(wine --version 2>/dev/null)"
     msg "Arch: ${CHK_ARCH}-bit"
     
     # Create the winebox dir, then download the winebox logo.
     [ ! -d "${HOME}/.winebox" ] && mkdir -p "${HOME}/.winebox" || :
-    curl -sL -o "${HOME}/.winebox/winebox.png" \
-    "https://raw.githubusercontent.com/owl4ce/winebox/main/.winebox/winebox.png" 
+    curl -sL "https://raw.githubusercontent.com/owl4ce/winebox/main/.winebox/winebox.png" -o "${HOME}/.winebox/winebox.png"
     
-    # Download winbox.
+    # Download winbox if not exist.
     if [ ! -f "${HOME}/.winebox/winbox${CHK_ARCH}.exe" ]; then
         msg "Downloading Winbox ${M}[${NC}${CHK_ARCH}-bit${M}]${NC}"
-        winbox${CHK_ARCH} 2>/dev/null
+        winbox${CHK_ARCH}
     else
-        err "Winebox already exist. Exiting .."; exit 1
-    fi
+        err "Winebox already exist. Exiting .."
+    fi; newxit
     
-    # Create a desktop shortcut.
-    msg "Creating desktop shortcut .. "
-    [ ! -d "${HOME}/.local/share/applications" ] && \
-    mkdir -p "${HOME}/.local/share/applications"
+    msg "Creating desktop shortcut .. " # Below will create the desktop shorcut directory first, if not exist.
+    [ ! -d "${HOME}/.local/share/applications" ] && mkdir -p "${HOME}/.local/share/applications" || :
     
-    [ "$CHK_ARCH" = "32" ] && wine="wine" || wine="wine64"
+    [ "$CHK_ARCH" -eq 32 ] && wine="wine" || wine="wine64" # Create a desktop shortcut.
     cat > "${HOME}/.local/share/applications/winebox.desktop" << EOF
 [Desktop Entry]
 Comment=Run MikroTik Winbox over Wine (${CHK_ARCH}-bit)
@@ -64,25 +72,25 @@ EOF
 
     # Make sure the desktop shortcut is executable.
     chmod +x "${HOME}/.local/share/applications/winebox.desktop"
-    msg "Winebox successfully installed!" # Success.
+    msg "Winebox successfully installed!" # Installation succeed.
 }
 
 # Check if running as regular user, exit if running as root.
 if [ "$(id -u)" -eq 0 ]; then    
-    err "Running as ${R}root${NC} is detected. Please run as regular user!"; exit 1
+    err "Running as ${R}root${NC} is detected. Please run as regular user!"
 else
     # Main.
     case ${1} in
         -u) if [ -d "${HOME}/.winebox" ]; then
-                rm -rfv "${HOME}/.winebox" "${HOME}/.local/share/applications/winebox.desktop" && \
+                rm -rfv "${HOME}/.winebox" "${HOME}/.local/share/applications/winebox.desktop"
                 msg "Winebox successfuly removed!"
             else
                 err "Winebox not installed!"
             fi
         ;;
-        -*) err "unknown option (${1})"
+        -*) err "Invalid option! (${m}${1}${NC})"
         ;;
         *)  install
         ;;
     esac
-fi
+fi; newxit
